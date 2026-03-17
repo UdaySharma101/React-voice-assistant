@@ -3,9 +3,31 @@ import React, { useEffect, useRef, useState } from "react";
 const Home = () => {
   const [show, setShow] = useState(false);
   const [userInput, setUserInput] = useState("");
+  const [aiOutput, setAiOutput] = useState('')
 
   const recognitionRef = useRef(null);
 
+  const getAiresponce = (input) =>{
+    const text = input.toLowerCase()
+
+    if(text.includes('hello') || text.includes('hi'))
+          return "Hey, how can I help you?"
+    
+    if(text.includes('shoe'))
+         return "Looking for shoes? I can suggest some options."
+    
+    if(text.includes('price') )
+    return "Prices vary—what","s your budget?"
+
+    
+    return 'Hmm, Tell me more '
+  }
+ 
+  const speak = (text)=>{
+    const spti = new SpeechSynthesisUtterance(text)
+      speechSynthesis.speak(spti)
+
+  }
 
   useEffect(() => {
     setShow(true);
@@ -18,6 +40,12 @@ const Home = () => {
     recognition.onresult = (event) => {
       const transcript = event.results[event.results.length - 1][0].transcript;
       setUserInput(transcript);
+
+      const responce = getAiresponce(transcript)
+
+      setAiOutput(responce)
+
+      speak(responce)
     };
 
     recognitionRef.current = recognition;
@@ -58,7 +86,7 @@ const Home = () => {
               ${show ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0"}`}
             >
               <p className="text-sm text-gray-300">AI</p>
-              <p>How can I help you?</p>
+              <p>{ aiOutput || "How can I help you?"}</p>
             </div>
           </div>
 
